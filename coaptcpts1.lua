@@ -26,7 +26,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMA
 
 do
 	coapProto = Proto("CoapTcp","CoAP (draft-tschofenig-core-coap-tcp-tls-01)")
-
+	
 	--message types
 	local types= {
 		[0]="CON",
@@ -68,6 +68,10 @@ do
 		[164]="5.04 Gateway Timeout",
 		[165]="5.05 Proxying Not Supported"
 	}
+	
+	-- preference for CoAP dissector
+	coapProto.prefs.port = Pref.uint("CoAP TCP Port", 5683, "Choose the port to look out for")
+	coapProto.prefs.forceTlv = Pref.Bool("Force TLV decoding", false, "For decoding the payload in LWM2M TLV")
   	
 	-- human readable names for pre-defined content formats
 	local formatStrings =  {
@@ -128,10 +132,10 @@ do
 	f.block1m = ProtoField.uint8("coap.options.block1.m", "M", nil, nil, 0x08)
 	f.block1szx = ProtoField.uint8("coap.options.block1.szx", "SZX", nil, nil, 0x07)
 
-	f.size2 = ProtoField.uint32("coap18.options.size2", "Size2 (No. 28)")
+	f.size2 = ProtoField.uint32("coap.options.size2", "Size2 (No. 28)")
 
 	-- the message payload field
-	f.payload = ProtoField.string("coap18.payload", "Payload (Content)")
+	f.payload = ProtoField.string("coap.payload", "Payload (Content)")
   
 
 	--function to dissect the bytes
@@ -147,7 +151,7 @@ do
 		protoTree:add(f.tkl, buffer(4, 1))
 		protoTree:add(f.code, buffer(5, 1))
 		protoTree:add(f.msgid, buffer(6, 2))
-
+  
 		local tokenLength = bit32.band(buffer(4, 1):uint(), 0x0F)
 		local index = 8
 		
@@ -438,7 +442,7 @@ do
 	-- load the tcp.port table
 	tcp_table = DissectorTable.get("tcp.port")
 
-	-- register CoAP protocol to handle tcp port 5683
-	tcp_table:add(5683, coapProto)
+	-- register CoAP protocol to handle tcp port (taken form the config)
+	tcp_table:add(coapProto.prefs.port, coapProto)
   
 end  

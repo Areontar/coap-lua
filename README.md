@@ -12,3 +12,14 @@ Type "coap18" in the filter field of Wireshark to filter all CoAP messages using
 - coap18.options.uripath == "test" for all messages that contain an URI-Path option with value "test".
  
 Note: This script needs LUA 5.2 (which for sure is available in Wireshark 1.10.5)
+
+Mac OSX
+Copie the lua dissector in the /Applications/Wireshark.app/Contents/Resources/share/wireshark
+
+The add the name at the end of init.lua 
+
+dofile(DATA_DIR.."coaptcpts1.lua")
+
+run wireshark.
+
+
