@@ -71,8 +71,7 @@ do
 	
 	-- preference for CoAP dissector
 	coapProto.prefs.port = Pref.uint("CoAP TCP Port", 5683, "Choose the port to look out for")
-	coapProto.prefs.forceTlv = Pref.Bool("Force TLV decoding", false, "For decoding the payload in LWM2M TLV")
-  	
+
 	-- human readable names for pre-defined content formats
 	local formatStrings =  {
 		[0]="text/plain; charset=utf-8",
